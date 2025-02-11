@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -21,63 +21,59 @@ import { gridSpacing } from 'store/constant';
 import chartData from './chart-data/total-growth-bar-chart';
 
 const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
-  {
-    value: 'month',
-    label: 'This Month'
-  },
-  {
-    value: 'year',
-    label: 'This Year'
-  }
+  { value: 'today', label: 'Today' },
+  { value: 'month', label: 'This Month' },
+  { value: 'year', label: 'This Year' }
 ];
 
-// ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
-
 const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = React.useState('today');
+  const [value, setValue] = useState('today');
+  const [news, setNews] = useState(null);
   const theme = useTheme();
-
-  const { primary } = theme.palette.text;
-  const divider = theme.palette.divider;
-  const grey500 = theme.palette.grey[500];
 
   const primary200 = theme.palette.primary[200];
   const primaryDark = theme.palette.primary.dark;
   const secondaryMain = theme.palette.secondary.main;
   const secondaryLight = theme.palette.secondary.light;
 
-  React.useEffect(() => {
-    const newChartData = {
-      ...chartData.options,
-      colors: [primary200, primaryDark, secondaryMain, secondaryLight],
-      xaxis: {
-        labels: {
-          style: {
-            colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary]
+  useEffect(() => {
+    const newsData = [
+      ['Volume got high in January.', 'Investors are excited for this year.'],
+      ['Paycheck is closed for February.', 'New product launch in March.'],
+      ['Revenue increased significantly in March.', 'Quarterly results were announced in April.'],
+      ['New product launch in May.', 'Market share grew in June.'],
+      ['Partnership deal closed in July.', 'New feature is coming out in August.']
+    ];
+
+    const options = {
+      chart: {
+        id: 'bar-chart',
+        type: 'line',
+        events: {
+          click: (event, chartContext, config) => {
+            const dataPointIndex = config.dataPointIndex;
+            if (dataPointIndex >= 0) setNews(newsData[dataPointIndex]);
           }
         }
       },
-      yaxis: {
-        labels: {
-          style: {
-            colors: [primary]
-          }
-        }
+      stroke: { curve: 'straight', width: 1 },
+      xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'] },
+      yaxis: { labels: { show: false } },
+      tooltip: { enabled: true },
+      dataLabels: {
+        enabled: false
       },
-      grid: { borderColor: divider },
-      tooltip: { theme: 'light' },
-      legend: { labels: { colors: grey500 } }
+      marker: {
+        show: false
+      }
     };
 
-    // do not load chart when loading
+    const series = [{ name: 'Sales', data: [60, 65, 50, 55, 45, 50, 49, 55] }];
+
     if (!isLoading) {
-      ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
+      ApexCharts.exec('bar-chart', 'updateOptions', { ...options, series });
     }
-  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, divider, isLoading, grey500]);
+  }, [primary200, primaryDark, secondaryMain, secondaryLight, isLoading]);
 
   return (
     <>
@@ -109,18 +105,55 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                '& .apexcharts-menu.apexcharts-menu-open': {
-                  bgcolor: 'background.paper'
-                }
-              }}
-            >
-              <Chart {...chartData} />
+            <Grid item xs={12}>
+              <Chart
+                options={{
+                  chart: { type: 'line' },
+                  events: {
+                    click: (event, chartContext, config) => {
+                      const dataPointIndex = config.dataPointIndex;
+                      setNews(newsData[dataPointIndex]);
+                    }
+                  },
+                  dataLabels: { enabled: false }
+                }}
+                series={chartData.series}
+                type="area"
+                height={400}
+              />
             </Grid>
           </Grid>
+          {news && (
+            <div className="news-container">
+              <div className="news-header">
+                <div className="header-text">Related News</div>
+              </div>
+              <div className="news-content">
+                <div className="news-items">
+                  {news.map((item, index) => (
+                    <div className="news-item" key={index}>
+                      {index === 0 ? (
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/2491px-Logo_of_Twitter.svg.png"
+                          width={30}
+                          height={30}
+                          alt="twitter"
+                        />
+                      ) : (
+                        <img
+                          src="https://static.vecteezy.com/system/resources/previews/031/737/215/non_2x/twitter-new-logo-twitter-icons-new-twitter-logo-x-2023-x-social-media-icon-free-png.png"
+                          width={30}
+                          height={30}
+                          alt="facebook"
+                        />
+                      )}
+                      <span className="news-title">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </MainCard>
       )}
     </>

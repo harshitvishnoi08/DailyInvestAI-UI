@@ -5,9 +5,13 @@ const chartData = {
   height: 95,
   options: {
     chart: {
-      id: 'support-chart',
-      sparkline: {
-        enabled: true
+      id: 'bar-chart',
+      type: 'line',
+      events: {
+        click: (event, chartContext, config) => {
+          const dataPointIndex = config.dataPointIndex;
+          if (dataPointIndex >= 0) setNews(newsData[dataPointIndex]);
+        }
       }
     },
     dataLabels: {

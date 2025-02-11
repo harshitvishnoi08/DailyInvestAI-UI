@@ -13,29 +13,38 @@ const BajajAreaChartCard = () => {
   const options = {
     chart: {
       id: 'area-chart',
-      type: 'area',
+      type: 'line',
       events: {
         click: (event, chartContext, config) => {
-          const dataPointIndex = config.dataPointIndex; // Index of the clicked data point
+          const dataPointIndex = config.dataPointIndex;
           setNews(newsData[dataPointIndex]);
         }
       }
     },
     stroke: {
-      curve: 'smooth'
+      curve: 'straight',
+      width: 2
     },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May']
-    }
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+      labels: { show: false },
+      title: { text: undefined }
+    },
+    yaxis: {
+      labels: { show: false },
+      title: { text: undefined }
+    },
+    legend: { show: false },
+    dataLabels: { enabled: false }, // Removes labels from points
+    tooltip: { enabled: true } // Keeps tooltips on hover
   };
 
   const series = [
     {
       name: 'Sales',
-      data: [30, 40, 35, 50, 49]
+      data: [60, 65, 50, 55, 45, 50, 49, 55]
     }
   ];
-
   return (
     <div>
       <ApexCharts options={options} series={series} type="area" height={350} />

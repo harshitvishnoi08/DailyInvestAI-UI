@@ -2,14 +2,12 @@
 
 const chartData = {
   height: 480,
-  type: 'bar',
+  type: 'area',
   options: {
     chart: {
       id: 'bar-chart',
+      type: 'area',
       stacked: true,
-      toolbar: {
-        show: true
-      },
       zoom: {
         enabled: true
       }
