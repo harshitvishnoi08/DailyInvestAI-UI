@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 // third-party
 import ApexCharts from 'apexcharts';
@@ -29,6 +30,7 @@ const status = [
 const TotalGrowthBarChart = ({ isLoading }) => {
   const [value, setValue] = useState('today');
   const [news, setNews] = useState(null);
+  const [isFullView, setIsFullView] = useState(false); // State for full-view mode
   const theme = useTheme();
 
   const primary200 = theme.palette.primary[200];
@@ -75,6 +77,11 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     }
   }, [primary200, primaryDark, secondaryMain, secondaryLight, isLoading]);
 
+  // Function to toggle full-view mode
+  const toggleFullView = () => {
+    setIsFullView(!isFullView);
+  };
+
   return (
     <>
       {isLoading ? (
@@ -106,21 +113,37 @@ const TotalGrowthBarChart = ({ isLoading }) => {
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chart
-                options={{
-                  chart: { type: 'line' },
-                  events: {
-                    click: (event, chartContext, config) => {
-                      const dataPointIndex = config.dataPointIndex;
-                      setNews(newsData[dataPointIndex]);
-                    }
-                  },
-                  dataLabels: { enabled: false }
+              <Button variant="contained" onClick={toggleFullView} style={{ marginBottom: '10px' }}>
+                {isFullView ? 'Exit Full View' : 'Full View'}
+              </Button>
+              <div
+                style={{
+                  width: isFullView ? '100vw' : '100%',
+                  height: isFullView ? '100vh' : '400px',
+                  position: isFullView ? 'fixed' : 'static',
+                  top: isFullView ? '0' : 'auto',
+                  left: isFullView ? '0' : 'auto',
+                  zIndex: isFullView ? 1000 : 'auto',
+                  backgroundColor: isFullView ? '#fff' : 'transparent',
+                  padding: isFullView ? '20px' : '0'
                 }}
-                series={chartData.series}
-                type="area"
-                height={400}
-              />
+              >
+                <Chart
+                  options={{
+                    chart: { type: 'line' },
+                    events: {
+                      click: (event, chartContext, config) => {
+                        const dataPointIndex = config.dataPointIndex;
+                        setNews(newsData[dataPointIndex]);
+                      }
+                    },
+                    dataLabels: { enabled: false }
+                  }}
+                  series={chartData.series}
+                  type="area"
+                  height={isFullView ? '90%' : '100%'}
+                />
+              </div>
             </Grid>
           </Grid>
           {news && (
