@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-
+import axios from 'axios';
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -16,6 +16,7 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
+import { useEffect, useState } from 'react';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
@@ -48,7 +49,12 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 // ==============================|| DASHBOARD - TOTAL INCOME DARK CARD ||============================== //
 
 const TotalIncomeDarkCard = ({ isLoading }) => {
+  const [sensex, setSensex] = useState(0);
   const theme = useTheme();
+  useEffect(() => {
+    const response = axios.get(`http://localhost:5000/api/current_price?symbol=^BSESN`);
+    response.then((res) => setSensex(res.data.current_price));
+  }, []);
 
   return (
     <>
@@ -76,12 +82,12 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                   sx={{ py: 0, my: 0.45 }}
                   primary={
                     <Typography variant="h4" sx={{ color: '#fff' }}>
-                      $203k
+                      {sensex}
                     </Typography>
                   }
                   secondary={
                     <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
-                      Total Income
+                      Sensex
                     </Typography>
                   }
                 />

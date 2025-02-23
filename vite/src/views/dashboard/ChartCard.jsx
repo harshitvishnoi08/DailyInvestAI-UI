@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ApexCharts from 'react-apexcharts';
 import '../../assets/css/main.css';
+import axios from 'axios';
 
-const BajajAreaChartCard = () => {
+// Fetch data first
+async function fetchData(symbol) {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/get_data?symbol=${symbol}`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
+const ChartCard = ({ ChartText, symbol }) => {
   const [news, setNews] = useState(null);
   const [isFullView, setIsFullView] = useState(false); // State for full-view mode
-
+  const [serdata, setSerdata] = useState([]);
+  const [serdate, setSerdate] = useState([]);
   const newsData = [
     ['Volume got high in January.', 'Investors are excited for this year.'],
     ['Paycheck is closed for February.', 'New product launch in March.'],
@@ -13,7 +25,15 @@ const BajajAreaChartCard = () => {
     ['New product launch in May.', 'Market share grew in June.'],
     ['Partnership deal closed in July.', 'New feature is coming out in August.']
   ];
-
+  useEffect(() => {
+    async function getData() {
+      const data = await fetchData(symbol);
+      console.log(data.values);
+      setSerdata(data.values.map((x) => parseFloat(x).toFixed(2)));
+      setSerdate(data.dates);
+    }
+    getData();
+  }, []);
   const options = {
     chart: {
       id: 'area-chart',
@@ -25,12 +45,21 @@ const BajajAreaChartCard = () => {
         }
       }
     },
+    title: {
+      text: ChartText,
+      align: 'left',
+      style: {
+        fontSize: '18px',
+        fontWeight: 400,
+        color: '#000'
+      }
+    },
     stroke: {
       curve: 'straight',
       width: 2
     },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+      categories: serdate,
       labels: { show: false },
       title: { text: undefined }
     },
@@ -39,19 +68,23 @@ const BajajAreaChartCard = () => {
       title: { text: undefined }
     },
     legend: { show: false },
-    dataLabels: { enabled: false }, // Removes labels from points
-    tooltip: { enabled: true } // Keeps tooltips on hover
+    dataLabels: { enabled: false },
+    tooltip: { enabled: true }
   };
 
   const series = [
     {
-      name: 'Sales',
-      data: [60, 65, 50, 55, 45, 50, 49, 55]
+      name: 'Close',
+      data: serdata
     }
   ];
 
   // Function to toggle full-view mode
   const toggleFullView = () => {
+    setTimeout(() => {
+      const pages = document.querySelector('.MuiPaper-root.css-1rcxgiw-MuiPaper-root-MuiDrawer-paper');
+      pages.style.display = 'none';
+    }, 0);
     setIsFullView(!isFullView);
   };
 
@@ -137,4 +170,4 @@ const BajajAreaChartCard = () => {
   );
 };
 
-export default BajajAreaChartCard;
+export default ChartCard;
