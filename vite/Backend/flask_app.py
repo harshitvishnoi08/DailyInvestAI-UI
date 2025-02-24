@@ -14,6 +14,7 @@ def get_data():
     hist = dat.history(period='1mo')
     dates = [day.strftime("%d %b") for day in hist.index.date]
     return jsonify({"dates":dates,"values":hist.get("Close").tolist()})
+
 @app.route("/api/current_price", methods=["GET"])
 def current_stock_price():
     symbol = request.args.get("symbol")
