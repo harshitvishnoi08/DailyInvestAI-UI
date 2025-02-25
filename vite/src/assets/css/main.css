@@ -42,12 +42,25 @@
   background: white;
   padding: 10px;
 }
-
 .news-title {
   font-size: 14px;
   font-weight: 500;
   color: #333;
   display: block;
+  width: 230px;
+  overflow-x: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+@media (min-width: 768px) {
+  .news-title::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+  .news-title::-webkit-scrollbar-thumb {
+    background-color: transparent;
+  }
 }
 
 .news-date {

@@ -2,7 +2,7 @@
 import { useTheme } from '@mui/material/styles';
 import logoDark from 'assets/images/logo-dark.svg';
 import logo from 'assets/images/logo.svg';
-
+import favicon from 'assets/images/favicon.jpg';
 // ==============================|| LOGO SVG ||============================== //
 
 const Logo = () => {
@@ -16,7 +16,7 @@ const Logo = () => {
      */
     <>
       <a href="/" onClick={() => window.location.reload()}>
-        <img src={logo} alt="Berry" width="100" />
+        <img src={favicon} alt="Berry" width="50" />
       </a>
     </>
 
