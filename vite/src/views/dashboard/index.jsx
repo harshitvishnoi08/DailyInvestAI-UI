@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import axios from 'axios';
 // material-ui
 import Grid from '@mui/material/Grid';
 
@@ -20,9 +20,12 @@ import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
+  const [N50, setN50] = useState(0);
 
   useEffect(() => {
     setLoading(false);
+    const response = axios.get(`http://localhost:5000/api/current_price?symbol=^NSEI`);
+    response.then((res) => setN50(res.data.current_price));
   }, []);
 
   return (
@@ -44,8 +47,8 @@ const Dashboard = () => {
                 <TotalIncomeLightCard
                   {...{
                     isLoading: isLoading,
-                    total: 203,
-                    label: 'Total Income',
+                    total: N50,
+                    label: 'Nifty 50',
                     icon: <StorefrontTwoToneIcon fontSize="inherit" />
                   }}
                 />

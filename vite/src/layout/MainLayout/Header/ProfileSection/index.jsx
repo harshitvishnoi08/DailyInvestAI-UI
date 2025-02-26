@@ -36,6 +36,7 @@ import User1 from 'assets/images/users/user-round.svg';
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons-react';
+import { googleLogout } from '@react-oauth/google';
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -54,7 +55,10 @@ const ProfileSection = () => {
    * */
   const anchorRef = useRef(null);
   const handleLogout = async () => {
+    googleLogout();
     console.log('Logout');
+    localStorage.removeItem('user');
+    navigate('/pages/login/login3', { replace: true });
   };
 
   const handleClose = (event) => {
@@ -109,7 +113,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={User1}
+            src={(JSON.parse(localStorage.getItem('user'))?.picture ?? User1).replace("'", '')}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -157,7 +161,7 @@ const ProfileSection = () => {
                       <Stack direction="row" spacing={0.5} alignItems="center">
                         <Typography variant="h4">Good Morning,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          Johne Doe
+                          {JSON.parse(localStorage.getItem('user'))?.name?.replace("'", '') || 'John Doe'}
                         </Typography>
                       </Stack>
                       <Typography variant="subtitle2">Project Admin</Typography>

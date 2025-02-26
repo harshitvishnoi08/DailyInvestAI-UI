@@ -6,7 +6,7 @@ const chartData = {
   options: {
     chart: {
       id: 'bar-chart',
-      type: 'area',
+      type: 'line',
       stacked: true,
       zoom: {
         enabled: true

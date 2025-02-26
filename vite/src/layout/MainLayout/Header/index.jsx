@@ -14,6 +14,8 @@ import ProfileSection from './ProfileSection';
 
 // assets
 import { IconMenu2 } from '@tabler/icons-react';
+import { useGoogleOneTapLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -56,15 +58,23 @@ const Header = ({ handleLeftDrawerToggle }) => {
           </Avatar>
         </ButtonBase>
       </Box>
-
       {/* header search */}
       <SearchSection />
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
-
-      {/* notification & profile */}
       <NotificationSection />
       <ProfileSection />
+      {localStorage.getItem('user') === null &&
+        useGoogleOneTapLogin({
+          onSuccess: (credentialResponse) => {
+            const decoded = jwtDecode(credentialResponse.credential);
+            localStorage.setItem('user', JSON.stringify(decoded));
+            window.location.href = '/free';
+          },
+          onError: () => {
+            console.log('Login Failed');
+          }
+        })}
     </>
   );
 };

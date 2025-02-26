@@ -31,12 +31,15 @@ import reportWebVitals from 'reportWebVitals';
 const container = document.getElementById('root');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
 const store = configureStore({ reducer });
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // ==============================|| REACT DOM RENDER  ||============================== //
 
 root.render(
   <Provider store={store}>
-    <App />
+    <GoogleOAuthProvider clientId="348004197073-ts7nsoqtq97h6t9vrf0mippa92guvj21.apps.googleusercontent.com">
+      <App />
+    </GoogleOAuthProvider>
   </Provider>
 );
 
