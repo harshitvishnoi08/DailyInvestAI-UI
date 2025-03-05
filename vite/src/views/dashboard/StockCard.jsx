@@ -26,9 +26,14 @@ async function fetchSummary(symbol) {
     return '';
   }
 }
-const ChartCard = ({ ChartText, symbol }) => {
+const StockCard = ({ ChartText, symbol }) => {
   const [lang, setLang] = useState('en');
+  if (!symbol && !ChartText) {
+    ChartText = localStorage.getItem('name');
+    symbol = localStorage.getItem('symbol');
+  }
   const [analysis, setAnalysis] = useState('');
+
   const [news, setNews] = useState([]);
   const [isFullView, setIsFullView] = useState(false); // State for full-view mode
   const [serdata, setSerdata] = useState([]);
@@ -168,9 +173,9 @@ const ChartCard = ({ ChartText, symbol }) => {
 
   useEffect(() => {
     async function getAnalysis() {
-      if (sessionStorage.getItem('analysis')) return setAnalysis(JSON.parse(sessionStorage.getItem('analysis')));
+      if (sessionStorage.getItem(`${symbol}_analysis`)) return setAnalysis(JSON.parse(sessionStorage.getItem(`${symbol}_analysis`)));
       const data = await fetchSummary(symbol);
-      sessionStorage.setItem('analysis', JSON.stringify(data));
+      sessionStorage.setItem(`${symbol}_analysis`, JSON.stringify(data));
       setAnalysis(data);
     }
 
@@ -374,6 +379,24 @@ const ChartCard = ({ ChartText, symbol }) => {
                 </div>
               </div>
             </div>
+            {analysis ? (
+              <div class="data-analysis">
+                <div class="card-content">
+                  <h3>Data Analysis</h3>
+                  <div dangerouslySetInnerHTML={{ __html: analysis }} />
+                </div>
+              </div>
+            ) : (
+              <div class="data-analysis">
+                <div class="card-content">
+                  <h3>Data Analysis</h3>
+                  <div className="spinner-container">
+                    <div className="loading-spinner"></div>
+                    <p>Please Wait while we are generating the analysis ...</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         }
       </div>
@@ -381,4 +404,4 @@ const ChartCard = ({ ChartText, symbol }) => {
   );
 };
 
-export default ChartCard;
+export default StockCard;

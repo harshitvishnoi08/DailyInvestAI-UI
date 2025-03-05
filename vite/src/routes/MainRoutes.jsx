@@ -3,6 +3,7 @@ import { lazy } from 'react';
 // project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
+import StockCard from 'views/dashboard/StockCard';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
@@ -62,6 +63,10 @@ const MainRoutes = {
           element: <UtilsShadow />
         }
       ]
+    },
+    {
+      path: 'stockchart',
+      element: <StockCard />
     },
     // {
     //   path: 'icons',

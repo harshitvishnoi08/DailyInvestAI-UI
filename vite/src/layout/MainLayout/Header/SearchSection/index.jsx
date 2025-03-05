@@ -1,28 +1,14 @@
-import PropTypes from 'prop-types';
-import { useState, forwardRef } from 'react';
-
-// material-ui
+import React, { useState } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import { IconSearch, IconAdjustmentsHorizontal } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Popper from '@mui/material/Popper';
 
-// third-party
-import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
-
-// project imports
-import Transitions from 'ui-component/extended/Transitions';
-
-// assets
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons-react';
-
-const HeaderAvatar = forwardRef(({ children, ...others }, ref) => {
+const HeaderAvatar = React.forwardRef(({ children, ...others }, ref) => {
   const theme = useTheme();
-
   return (
     <Avatar
       ref={ref}
@@ -44,129 +30,61 @@ const HeaderAvatar = forwardRef(({ children, ...others }, ref) => {
   );
 });
 
-HeaderAvatar.propTypes = {
-  children: PropTypes.node
-};
+const stocks = [
+  { symbol: 'BAJAJFINSV.NS', name: 'Bajaj Finserv' },
+  { symbol: 'RELIANCE.NS', name: 'Reliance Industries Ltd' },
+  { symbol: 'ZOMATO.NS', name: 'Zomato' },
+  { symbol: 'ADANIENT.NS', name: 'Adani Enterprises Ltd' },
+  { symbol: 'TATAMOTORS.NS', name: 'Tata Motors Ltd' }
+];
 
-// ==============================|| SEARCH INPUT - MOBILE||============================== //
-
-const MobileSearch = ({ value, setValue, popupState }) => {
-  const theme = useTheme();
-
-  return (
-    <OutlinedInput
-      id="input-search-header"
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-      placeholder="Search"
-      startAdornment={
-        <InputAdornment position="start">
-          <IconSearch stroke={1.5} size="16px" />
-        </InputAdornment>
-      }
-      endAdornment={
-        <InputAdornment position="end">
-          <HeaderAvatar>
-            <IconAdjustmentsHorizontal stroke={1.5} size="20px" />
-          </HeaderAvatar>
-          <Box sx={{ ml: 2 }}>
-            <Avatar
-              variant="rounded"
-              sx={{
-                ...theme.typography.commonAvatar,
-                ...theme.typography.mediumAvatar,
-                bgcolor: 'orange.light',
-                color: 'orange.dark',
-                '&:hover': {
-                  bgcolor: 'orange.dark',
-                  color: 'orange.light'
-                }
-              }}
-              {...bindToggle(popupState)}
-            >
-              <IconX stroke={1.5} size="20px" />
-            </Avatar>
-          </Box>
-        </InputAdornment>
-      }
-      aria-describedby="search-helper-text"
-      inputProps={{ 'aria-label': 'weight', sx: { bgcolor: 'transparent', pl: 0.5 } }}
-      sx={{ width: '100%', ml: 0.5, px: 2, bgcolor: 'background.paper' }}
-    />
-  );
-};
-
-MobileSearch.propTypes = {
-  value: PropTypes.string,
-  setValue: PropTypes.func,
-  popupState: PopupState
-};
-
-// ==============================|| SEARCH INPUT ||============================== //
+const suggestions = stocks.map((stock) => ({
+  label: stock.name,
+  symbol: stock.symbol,
+  name: stock.name,
+  url: `/stockchart`
+}));
 
 const SearchSection = () => {
   const [value, setValue] = useState('');
 
+  const handleSelect = (event, selectedOption) => {
+    if (selectedOption) {
+      localStorage.setItem('symbol', selectedOption.symbol);
+      localStorage.setItem('name', selectedOption.name);
+      window.location.reload();
+    }
+  };
+
   return (
-    <>
-      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        <PopupState variant="popper" popupId="demo-popup-popper">
-          {(popupState) => (
-            <>
-              <Box sx={{ ml: 2 }}>
-                <HeaderAvatar {...bindToggle(popupState)}>
-                  <IconSearch stroke={1.5} size="19.2px" />
-                </HeaderAvatar>
-              </Box>
-              <Popper
-                {...bindPopper(popupState)}
-                transition
-                sx={{ zIndex: 1100, width: '99%', top: '-55px !important', px: { xs: 1.25, sm: 1.5 } }}
-              >
-                {({ TransitionProps }) => (
-                  <>
-                    <Transitions type="zoom" {...TransitionProps} sx={{ transformOrigin: 'center left' }}>
-                      <Card sx={{ bgcolor: 'background.default', border: 0, boxShadow: 'none' }}>
-                        <Box sx={{ p: 2 }}>
-                          <Grid container alignItems="center" justifyContent="space-between">
-                            <Grid item xs>
-                              <MobileSearch value={value} setValue={setValue} popupState={popupState} />
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      </Card>
-                    </Transitions>
-                  </>
-                )}
-              </Popper>
-            </>
-          )}
-        </PopupState>
-      </Box>
-      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-        <OutlinedInput
-          id="input-search-header"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
+    <Autocomplete
+      freeSolo
+      options={suggestions}
+      getOptionLabel={(option) => option.label}
+      onInputChange={(event, newInputValue) => setValue(newInputValue)}
+      onChange={handleSelect}
+      renderOption={(props, option) => (
+        <li {...props}>
+          <Link to={option.url}>{option.label}</Link>
+        </li>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
           placeholder="Search"
-          startAdornment={
-            <InputAdornment position="start">
-              <IconSearch stroke={1.5} size="16px" />
-            </InputAdornment>
-          }
-          endAdornment={
-            <InputAdornment position="end">
-              <HeaderAvatar>
-                <IconAdjustmentsHorizontal stroke={1.5} size="20px" />
-              </HeaderAvatar>
-            </InputAdornment>
-          }
-          aria-describedby="search-helper-text"
-          inputProps={{ 'aria-label': 'weight', sx: { bgcolor: 'transparent', pl: 0.5 } }}
+          variant="outlined"
           sx={{ width: { md: 250, lg: 434 }, ml: 2, px: 2 }}
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconSearch stroke={1.5} size="16px" />
+              </InputAdornment>
+            )
+          }}
         />
-      </Box>
-    </>
+      )}
+    />
   );
 };
 

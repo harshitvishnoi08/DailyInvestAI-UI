@@ -10,6 +10,7 @@ import TotalOrderLineChartCard from './TotalOrderLineChartCard';
 import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrowthBarChart from './TotalGrowthBarChart';
+import ChatBot from 'views/dashboard/ChatBot';
 
 import { gridSpacing } from 'store/constant';
 
@@ -21,7 +22,6 @@ import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
   const [N50, setN50] = useState(0);
-
   useEffect(() => {
     setLoading(false);
     const response = axios.get(`http://localhost:5000/api/current_price?symbol=^NSEI`);

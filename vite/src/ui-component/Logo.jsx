@@ -1,8 +1,6 @@
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import logoDark from 'assets/images/logo-dark.svg';
-import logo from 'assets/images/logo.svg';
-import favicon from 'assets/images/favicon.jpg';
+
 // ==============================|| LOGO SVG ||============================== //
 
 const Logo = () => {
@@ -16,7 +14,7 @@ const Logo = () => {
      */
     <>
       <a href="/" onClick={() => window.location.reload()}>
-        <img src={favicon} alt="Berry" width="50" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeHa6evwFE4amPSrUt8ORyDg8B18LZaQGbOQ&s" alt="Berry" width="100" />
       </a>
     </>
 
